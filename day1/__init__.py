@@ -5,19 +5,15 @@ import re
 
 
 def pt1(lines):
-    """ part one """
-    reone = r'^(.)(.*)(.)$'
-    scrubs = [
-        ans
-        for line in lines
-        if (ans := re.sub(r'[^0-9]', "", line))
-    ]
-    nums = [int(re.sub(reone, r'\1\3', line)) for line in scrubs]
-    return sum(i if i > 10 else 11*i for i in nums)
+    """day one part one"""
+    reone = r"^(.)(.*)(.)$"
+    scrubs = [ans for line in lines if (ans := re.sub(r"[^0-9]", "", line))]
+    nums = [int(re.sub(reone, r"\1\3", line)) for line in scrubs]
+    return sum(i if i > 10 else 11 * i for i in nums)
 
 
 def pt2(lines):
-    """ part two """
+    """day one part two"""
     digits = {
         "1": 1,
         "2": 2,
@@ -38,8 +34,8 @@ def pt2(lines):
         "eight": 8,
         "nine": 9,
     }
-    regex = r'([0-9]|one|two|three|four|five|six|seven|eight|nine)'
-    regexr = r'([0-9]|enin|thgie|neves|xis|evif|ruof|eerht|owt|eno)'
+    regex = r"([0-9]|one|two|three|four|five|six|seven|eight|nine)"
+    regexr = r"([0-9]|enin|thgie|neves|xis|evif|ruof|eerht|owt|eno)"
 
     answers = []
     for line in lines:
@@ -47,7 +43,7 @@ def pt2(lines):
         matchedr = re.search(regexr, line[::-1])
         total = 0
         if matched:
-            total += 10*int(digits[matched.groups()[0]])
+            total += 10 * int(digits[matched.groups()[0]])
         if matchedr:
             total += int(digits[matchedr.groups()[0][::-1]])
         answers.append(total)
@@ -55,7 +51,7 @@ def pt2(lines):
 
 
 def main(prefix=""):
-    """ main """
+    """main"""
     with open(f"{prefix}input.txt", encoding="utf-8") as i_f:
         lines = i_f.read().split("\n")[:-1]
 
