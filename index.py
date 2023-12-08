@@ -6,6 +6,7 @@ from day3 import main as day3
 from day4 import main as day4
 from day5 import main as day5
 from day6 import main as day6
+from day7 import main as day7
 
 
 def main():
@@ -27,6 +28,9 @@ def main():
 
     print("Day 6")
     day6(prefix="./day6/")
+
+    print("Day 7")
+    day7(prefix="./day7/")
 
 
 if __name__ == "__main__":

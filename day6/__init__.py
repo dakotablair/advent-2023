@@ -79,7 +79,6 @@ def main(prefix=""):
     """day six"""
     with open(f"{prefix}input.txt", encoding="utf-8") as i_f:
         lines = i_f.read().split("\n")[:-1]
-
     print("Part 1")
     example_one_lines = EXAMPLE_ONE.split("\n")
     eg1 = pt1(example_one_lines)
