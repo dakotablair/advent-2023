@@ -4,6 +4,7 @@
 
 import re
 from functools import reduce
+from math import lcm
 
 # from textwrap import dedent
 
@@ -75,28 +76,43 @@ def pt1(lines):
     return steps
 
 
-def pt2(lines):
+def pt2(lines):  # pylint: disable=too-many-locals
     """day eight part two"""
     nav = lines[0]
     nodes = get_nodes(lines)
     heads = [nodes[name] for name in nodes.keys() if name[2] == "A"]
     # tails = [node.name for node in nodes if node.name[2] == 'Z']
-    steps = 0
-    index = 0
     nav_map = {"L": "left", "R": "right"}
+    direction = nav[0]
 
-    def done():
-        return all(head.name[2] == "Z" for head in heads)
+    # node_cycle = {head.name: [head.name] for head in heads}
+    node_first_seen = {
+        head.name: {(head.name, direction): 0} for head in heads
+    }
+    node_paths = {head.name: {(head.name, direction)} for head in heads}
+    node_periods = {head.name: 0 for head in heads}
 
-    while not done():
-        progress = None if steps % 1000000 else print(steps)  # pylint: disable
-        assert progress is None
-        index %= len(nav)
-        direction = nav[index % len(nav)]
-        heads = [getattr(head, nav_map[direction]) for head in heads]
-        index += 1
-        steps += 1
-    return steps
+    for head in heads:
+        index = 0
+        steps = 0
+        origin = head.name
+
+        def done(name, direction, idx, orig):
+            return (name, direction, idx) not in node_paths[orig]
+
+        while steps == 0 or done(head.name, direction, index, origin):
+            node_paths[origin].add((head.name, direction, index))
+            node_first_seen[origin][(head.name, direction, index)] = steps
+            head = getattr(head, nav_map[direction])
+            index += 1
+            steps += 1
+            index %= len(nav)
+            direction = nav[index % len(nav)]
+        node_periods[head.name] = (
+            steps - node_first_seen[origin][(head.name, direction, index)]
+        )
+    period = lcm(*[val for val in node_periods.values() if val > 0])
+    return period
 
 
 EXAMPLE_ONE = """
@@ -160,14 +176,18 @@ def main(prefix=""):
     print("Part 2")
     example_three_lines = EXAMPLE_THREE.split("\n")
     pt2eg1 = pt2(example_one_lines)
-    print(pt2eg1)
+    # print(pt2eg1)
     pt2eg2 = pt2(example_two_lines)
-    print(pt2eg2)
+    # print(pt2eg2)
     pt2eg3 = pt2(example_three_lines)
-    print(pt2eg3)
-    # assert eg2 == 5905
+    # print(pt2eg3)
+    assert pt2eg1
+    assert pt2eg2
+    assert pt2eg3
     ans2 = pt2(lines)
-    # # assert ans2 == 45647654
+    # 63568204859 is too low
+    # they were nice and lcm(*periods) is all you need
+    assert ans2 == 17099847107071
     print(ans2)
 
 
