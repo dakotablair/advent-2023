@@ -42,17 +42,63 @@ class Node:  # pylint: disable=too-few-public-methods
         self.right = right
 
 
+def diffs(nums):
+    return [ nums[ix + 1] - num for ix, num in enumerate(nums) if ix + 1 < len(nums)]
+
+
+def extrapolate(hists):
+    hists_rev = hists[::-1]
+    for ix, hist in enumerate(hists_rev):
+        if ix == 0:
+            hist.append(0)
+            continue
+        hist.append(hist[-1]+hists_rev[ix-1][-1])
+    return hists[0][-1]
+
+
+def lextrapolate(hists):
+    hists_rev = hists[::-1]
+    out = []
+    for ix, hist in enumerate(hists_rev):
+        if ix == 0:
+            out.append([0, *hist])
+            continue
+        out.append([(hist[0]-out[ix-1][0]), *hist])
+    return out[-1][0]
+
+
 def pt1(lines):
     """day nine part one"""
-    return len(lines)
+    exts = []
+    for line in lines:
+        nums = [int(num) for num in line.split(" ")]
+        succ_diffs = [nums]
+        diff_cur = nums
+        while any([bool(num) for num in diff_cur]):
+            diff_cur = diffs(diff_cur)
+            succ_diffs.append(diff_cur)
+        exts.append(extrapolate(succ_diffs))
+    return sum(exts)
 
 
 def pt2(lines):  # pylint: disable=too-many-locals
     """day nine part two"""
-    return len(lines)
+    exts = []
+    for line in lines:
+        nums = [int(num) for num in line.split(" ")]
+        succ_diffs = [nums]
+        diff_cur = nums
+        while any([bool(num) for num in diff_cur]):
+            diff_cur = diffs(diff_cur)
+            succ_diffs.append(diff_cur)
+        exts.append(lextrapolate(succ_diffs))
+    return sum(exts)
 
 
 EXAMPLE_ONE = """
+0 3 6 9 12 15
+1 3 6 10 15 21
+10 13 16 21 30 45
 """[
     1:-1
 ]
@@ -66,16 +112,17 @@ def main(prefix=""):
     print("Part 1")
     example_one_lines = EXAMPLE_ONE.split("\n")
     eg1 = pt1(example_one_lines)
-    # assert eg1 == 2
-    print(f"{eg1=}")
+    assert eg1 == 114
     ans1 = pt1(lines)
     # assert ans1 == 19099
-    print(f"{ans1=}")
+    print(f"{ans1}")
 
     print("Part 2")
+    eg1pt2 = pt2(example_one_lines)
+    assert eg1pt2 == 2
     ans2 = pt2(lines)
-    # assert ans2 == 17099847107071
-    print(f"{ans2=}")
+    assert ans2 == 1019
+    print(f"{ans2}")
 
 
 if __name__ == "__main__":
