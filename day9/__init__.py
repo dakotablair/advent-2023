@@ -2,11 +2,7 @@
 
 """ day 9 """
 
-import re
 from functools import reduce
-from math import lcm
-
-# from textwrap import dedent
 
 DIGITS = {str(i) for i in range(10)}
 
@@ -43,27 +39,34 @@ class Node:  # pylint: disable=too-few-public-methods
 
 
 def diffs(nums):
-    return [ nums[ix + 1] - num for ix, num in enumerate(nums) if ix + 1 < len(nums)]
+    """take differences of elements"""
+    return [
+        nums[index + 1] - num
+        for index, num in enumerate(nums)
+        if index + 1 < len(nums)
+    ]
 
 
 def extrapolate(hists):
+    """Use successive differences to extrapolate a new value."""
     hists_rev = hists[::-1]
-    for ix, hist in enumerate(hists_rev):
-        if ix == 0:
+    for index, hist in enumerate(hists_rev):
+        if index == 0:
             hist.append(0)
             continue
-        hist.append(hist[-1]+hists_rev[ix-1][-1])
+        hist.append(hist[-1] + hists_rev[index - 1][-1])
     return hists[0][-1]
 
 
 def lextrapolate(hists):
+    """Use successive differences to extrapolate a new value in reverse."""
     hists_rev = hists[::-1]
     out = []
-    for ix, hist in enumerate(hists_rev):
-        if ix == 0:
+    for index, hist in enumerate(hists_rev):
+        if index == 0:
             out.append([0, *hist])
             continue
-        out.append([(hist[0]-out[ix-1][0]), *hist])
+        out.append([(hist[0] - out[index - 1][0]), *hist])
     return out[-1][0]
 
 
@@ -74,7 +77,7 @@ def pt1(lines):
         nums = [int(num) for num in line.split(" ")]
         succ_diffs = [nums]
         diff_cur = nums
-        while any([bool(num) for num in diff_cur]):
+        while any(bool(num) for num in diff_cur):
             diff_cur = diffs(diff_cur)
             succ_diffs.append(diff_cur)
         exts.append(extrapolate(succ_diffs))
@@ -88,7 +91,7 @@ def pt2(lines):  # pylint: disable=too-many-locals
         nums = [int(num) for num in line.split(" ")]
         succ_diffs = [nums]
         diff_cur = nums
-        while any([bool(num) for num in diff_cur]):
+        while any(bool(num) for num in diff_cur):
             diff_cur = diffs(diff_cur)
             succ_diffs.append(diff_cur)
         exts.append(lextrapolate(succ_diffs))
